@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Budget Monitoring | Kanim Jakarta Barat</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <div class="login-backdrop"></div>
+  <div class="login-card">
+    <div class="brand-mark">IM</div>
+    <div class="eyebrow">KANTOR IMIGRASI JAKARTA BARAT</div>
+    <h1>Smart Budget<br>Monitoring</h1>
+    <p class="muted">Dashboard monitoring dan pengendalian anggaran</p>
+    <form id="loginForm">
+      <label>Username<input id="loginUser" autocomplete="username" required></label>
+      <label>Password<input id="loginPass" type="password" autocomplete="current-password" required></label>
+      <button class="btn primary full" type="submit">Masuk ke Sistem</button>
+    </form>
+    <div class="login-note">Prototype internal • Data contoh dapat diganti manual</div>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark small">IM</div>
+      <div><strong>SMART BUDGET</strong><span>MONITORING</span></div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-page="dashboard">▦ <span>Dashboard</span></button>
+      <button class="nav-item" data-page="data">▤ <span>Data Anggaran</span></button>
+      <button class="nav-item" data-page="monitoring">◉ <span>Monitoring</span></button>
+      <button class="nav-item" data-page="laporan">▥ <span>Laporan</span></button>
+      <button class="nav-item" data-page="pengaturan">⚙ <span>Pengaturan</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="user-mini"><div class="avatar" id="sideAvatar">A</div><div><strong id="sideUsername">admin</strong><span>Administrator</span></div></div>
+      <button id="logoutBtn" class="logout">↪ Keluar</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="crumb">Kanim Jakarta Barat / Pengelola Keuangan dan Anggaran</div><h2 id="pageTitle">Dashboard</h2></div>
+      <div class="top-user"><span id="topDate"></span><div class="avatar">A</div></div>
+    </header>
+
+    <section id="page-dashboard" class="page active-page">
+      <div class="hero-banner">
+        <div><span class="eyebrow">SMART BUDGET MONITORING</span><h3>Monitoring Anggaran Kanim Jakarta Barat</h3><p>Pantau pagu, realisasi, sisa anggaran, dan status pelaksanaan secara ringkas.</p></div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><span>Total Pagu Anggaran</span><strong id="kpiPagu">Rp0</strong><small>Seluruh bidang</small></div>
+        <div class="kpi"><span>Total Realisasi</span><strong id="kpiRealisasi">Rp0</strong><small>Akumulasi input</small></div>
+        <div class="kpi"><span>Sisa Anggaran</span><strong id="kpiSisa">Rp0</strong><small>Pagu − realisasi</small></div>
+        <div class="kpi"><span>Realisasi</span><strong id="kpiPct">0%</strong><small>Persentase keseluruhan</small></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><div class="card-head"><div><h3>Pagu Anggaran per Bidang</h3><p>Komposisi total pagu berdasarkan bidang</p></div></div><div id="bidangCards" class="bidang-cards"></div></div>
+        <div class="card"><div class="card-head"><div><h3>Komposisi Status</h3><p>Normal, Terpantau, dan Perhatian</p></div></div><div class="chart-wrap"><canvas id="statusChart"></canvas></div></div>
+      </div>
+      <div class="card"><div class="card-head"><div><h3>Realisasi per Bidang</h3><p>Perbandingan pagu dan realisasi</p></div></div><div class="chart-wide"><canvas id="budgetChart"></canvas></div></div>
+    </section>
+
+    <section id="page-data" class="page">
+      <div class="page-actions"><div><h3>Data Anggaran</h3><p>Tambahkan dan kelola data anggaran secara manual.</p></div><button class="btn primary" id="addDataBtn">＋ Tambah Data</button></div>
+      <div class="card filter-card"><div class="filters"><input id="dataSearch" placeholder="Cari kegiatan / bidang..."/><select id="dataBidangFilter"><option value="">Semua Bidang</option></select><select id="dataYearFilter"><option value="">Semua Tahun</option></select></div></div>
+      <div class="card table-card"><div class="table-scroll"><table><thead><tr><th>Tanggal</th><th>Bidang</th><th>Nama Kegiatan</th><th>Pagu</th><th>Realisasi</th><th>Sisa</th><th>%</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="dataTable"></tbody></table></div></div>
+    </section>
+
+    <section id="page-monitoring" class="page">
+      <div class="page-actions"><div><h3>Monitoring</h3><p>Gunakan filter untuk menelusuri kegiatan dan status anggaran.</p></div><button class="btn secondary" id="monitorPdfBtn">▣ Unduh PDF</button></div>
+      <div class="card filter-card"><div class="monitor-filters"><label>Bulan<select id="mMonth"><option value="">Semua Bulan</option></select></label><label>Tahun<select id="mYear"><option value="">Semua Tahun</option></select></label><label>Status<select id="mStatus"><option value="">Semua Status</option><option>Normal</option><option>Terpantau</option><option>Perhatian</option></select></label><label>Bidang<select id="mBidang"><option value="">Semua Bidang</option></select></label><label class="grow">Cari Kegiatan<input id="mKegiatan" placeholder="Ketik nama kegiatan..."></label><button class="btn primary" id="mCari">Cari</button><button class="btn ghost" id="mReset">Reset</button></div></div>
+      <div class="card table-card"><div class="table-scroll"><table><thead><tr><th>Periode</th><th>Bidang</th><th>Kegiatan</th><th>Pagu</th><th>Realisasi</th><th>Sisa</th><th>%</th><th>Status</th></tr></thead><tbody id="monitorTable"></tbody></table></div></div>
+    </section>
+
+    <section id="page-laporan" class="page">
+      <div class="page-actions"><div><h3>Laporan</h3><p>Pratinjau data yang telah diinput dan unduh dalam PDF.</p></div><button class="btn primary" id="reportPdfBtn">▣ Unduh Laporan PDF</button></div>
+      <div class="summary-strip"><div><span>Total Pagu</span><strong id="rPagu">Rp0</strong></div><div><span>Total Realisasi</span><strong id="rReal">Rp0</strong></div><div><span>Sisa</span><strong id="rSisa">Rp0</strong></div><div><span>Realisasi</span><strong id="rPct">0%</strong></div></div>
+      <div class="card table-card"><div class="table-scroll"><table><thead><tr><th>No</th><th>Tanggal</th><th>Bidang</th><th>Kegiatan</th><th>Pagu</th><th>Realisasi</th><th>Sisa</th><th>%</th><th>Status</th></tr></thead><tbody id="reportTable"></tbody></table></div></div>
+    </section>
+
+    <section id="page-pengaturan" class="page">
+      <div class="page-actions"><div><h3>Pengaturan Akun</h3><p>Ubah username dan password untuk akses prototype.</p></div></div>
+      <div class="settings-grid"><div class="card settings-card"><div class="settings-profile"><div class="avatar large" id="settingsAvatar">A</div><div><h3 id="settingsName">admin</h3><p>Administrator Smart Budget Monitoring</p></div></div><hr><form id="settingsForm"><label>Username saat ini<input id="currentUsername" readonly></label><label>Username baru<input id="newUsername" required></label><label>Password lama<input id="oldPassword" type="password" required></label><label>Password baru<input id="newPassword" type="password" minlength="6" required></label><label>Konfirmasi password baru<input id="confirmPassword" type="password" minlength="6" required></label><div class="form-actions"><button type="button" class="btn ghost" id="clearSettings">Bersihkan</button><button type="submit" class="btn primary">Simpan Perubahan</button></div></form></div><div class="card info-card"><h3>Catatan Prototype</h3><p>Username dan password disimpan di browser perangkat ini untuk kebutuhan demo. Untuk implementasi resmi, gunakan backend, database, enkripsi password, session management, dan hak akses sesuai SOP.</p><div class="mini-check">✓ Data anggaran tersimpan di browser</div><div class="mini-check">✓ Perubahan username/password tersimpan</div><div class="mini-check">✓ Dashboard dan laporan diperbarui otomatis</div></div></div>
+    </section>
+  </main>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modal-box"><div class="modal-head"><div><h3 id="modalTitle">Tambah Data Anggaran</h3><p>Isi data di bawah. Sisa dan status dihitung otomatis.</p></div><button id="closeModal" class="icon-btn">×</button></div><form id="dataForm"><input id="editId" type="hidden"><div class="form-grid"><label>Tanggal<input id="fDate" type="date" required></label><label>Bidang<select id="fBidang" required></select></label><label class="wide">Nama Kegiatan<input id="fKegiatan" required placeholder="Contoh: Operasional layanan..."></label><label>Pagu Anggaran<input id="fPagu" type="number" min="0" required placeholder="100000000"></label><label>Realisasi<input id="fRealisasi" type="number" min="0" required placeholder="20000000"></label><label class="wide">Catatan<input id="fCatatan" placeholder="Keterangan / tindak lanjut"></label></div><div class="form-actions"><button type="button" class="btn ghost" id="cancelModal">Batal</button><button class="btn primary" type="submit">Simpan Data</button></div></form></div></div>
+
+<script src="js/app.js"></script>
+</body></html>

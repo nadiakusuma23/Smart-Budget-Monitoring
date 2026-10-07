@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#9fd2ee"/><stop offset="1" stop-color="#edf7fc"/></linearGradient><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e6edf1"/></linearGradient></defs>
+<rect width="1600" height="900" fill="url(#sky)"/><circle cx="1320" cy="150" r="80" fill="#fff" opacity=".45"/>
+<rect y="640" width="1600" height="260" fill="#6c8b79"/><rect y="700" width="1600" height="200" fill="#66747a"/>
+<rect x="180" y="250" width="1240" height="420" rx="10" fill="url(#wall)" stroke="#d2dce2" stroke-width="6"/>
+<rect x="180" y="250" width="1240" height="85" fill="#f8fbfd"/><rect x="180" y="320" width="1240" height="18" fill="#1769aa"/>
+<rect x="240" y="360" width="80" height="280" fill="#1769aa"/><rect x="1280" y="360" width="80" height="280" fill="#1769aa"/>
+<rect x="370" y="390" width="180" height="145" fill="#b9d5e5"/><rect x="710" y="390" width="180" height="145" fill="#b9d5e5"/><rect x="1050" y="390" width="180" height="145" fill="#b9d5e5"/>
+<path d="M580 620h440L960 390H640z" fill="#dbe4e9"/><rect x="675" y="500" width="250" height="170" fill="#fff"/><rect x="790" y="520" width="20" height="150" fill="#1769aa"/>
+<text x="800" y="300" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#24435a">KANTOR IMIGRASI JAKARTA BARAT</text>
+<text x="800" y="575" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#597080">SMART BUDGET MONITORING</text>
+<text x="800" y="610" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" fill="#718694">Ilustrasi latar untuk prototype</text>
+</svg>
